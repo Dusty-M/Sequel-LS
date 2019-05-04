@@ -52,24 +52,20 @@ int main(int argc, char** argv) {
 	SQLComputeVisitor test;
 	std::vector<BaseTblPtr> result = tree->accept(&test);
 	
-	std::ofstream file;
-	file.open("./lib/testing/programoutput.csv", std::fstream::out | std::fstream::trunc);
-	file.close();
-	file.open("./lib/testing/programoutput.csv", std::fstream::out | std::fstream::app);
-
-	if(strcmp(argv[2],"test")) {
-		for (auto basetbl: result) {
-			std::vector<std::string> col_names = basetbl->get_col_names();
-			print_col_names(col_names, true, file);
-			print_tbl_contents(basetbl, true, file);
+	if(strcmp(argv[2], "test") == 0) { // if 2nd arg is "test", then store output to file
+		std::ofstream outfile("./lib/testing/programoutput.csv", 
+			std::ios::out | std::ios::trunc);
+		for (auto cur_tbl: result) {
+			std::vector<std::string> col_names = cur_tbl->get_col_names();
+			store_col_names(col_names, outfile);
+			store_tbl_contents(cur_tbl, outfile);
 		}
-	}else{
-		for (auto basetbl: result) {
-			std::vector<std::string> col_names = basetbl->get_col_names();
-			print_col_names(col_names, false, file);
-			print_tbl_contents(basetbl, false, file);
+		outfile.close();
+	} else { // if 2nd arg is not "test", then display output to screen
+		for (auto cur_tbl: result) {
+			std::vector<std::string> col_names = cur_tbl->get_col_names();
+			print_col_names(col_names);
+			print_tbl_contents(cur_tbl);
 		}
 	}
-	
-	file.close();
 }
