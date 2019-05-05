@@ -1,45 +1,49 @@
 PROGNAME =	MSGdb
 PROG =		$(BIN_DIR)/$(PROGNAME)
 
+VPATH =		$(ANTLR_OUT_DIR):$(LIB_DIR):$(SRC_DIR)
+
 BIN_DIR =	bin
 LIB_DIR =	lib
 SRC_DIR =	src
 
-VPATH =		$(LIB_DIR) $(SRC_DIR) $(BIN_DIR)
+ANTLR_LIB =	antlr4-runtime
+ANTLR_LIB_DIR =	.
+ANTLR_INC_DIR =	antlr_cpp_src/runtime/src
+ANTLR_OUT_DIR =	antlr_output
 
-PROG_OBJS =	$(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o, $(wildcard $(SRC_DIR)/*.cpp))
+ANTLR_SRCS =	SQLBaseVisitor.cpp SQLLexer.cpp SQLParser.cpp SQLVisitor.cpp
+LIB_SRCS =	$(wildcard $(LIB_DIR)/*.cpp)
+PROG_SRCS =	$(wildcard $(SRC_DIR)/*.cpp)
 
-LIB_OBJS =	$(patsubst $(LIB_DIR)/%.cpp, $(BIN_DIR)/%.o, $(wildcard $(LIB_DIR)/*.cpp))
- 
-OBJS =		$(LIB_OBJS)
+ANTLR_OBJS =	$(patsubst %.cpp, $(BIN_DIR)/%.o, $(ANTLR_SRCS))
+LIB_OBJS =	$(patsubst $(LIB_DIR)/%.cpp, $(BIN_DIR)/%.o, $(LIB_SRCS))
+PROG_OBJS =	$(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o, $(PROG_SRCS))
+
+OBJS =		$(ANTLR_OBJS) $(LIB_OBJS) $(PROG_OBJS)
 
 CXX ?=		g++  # '?=' allows CXX to be redefined in shell prior to running makefile
 DISABLE_WARNINGS = -Wno-unused-parameter -Wno-attributes -Wno-delete-non-virtual-dtor
-CXX_FLAGS =	-g -Wall $(DISABLE_WARNINGS) -Wextra -pedantic-errors -std=c++14
-CXX_SANFLAGS =	-fsanitize=address -fsanitize=undefined # These flags are causing linking errors at runtime
-INCLUDES =	-Iinclude
+CXXFLAGS =	-g -Wall $(DISABLE_WARNINGS) -Wextra -pedantic-errors -std=c++14
+CXXSANFLAGS =	-fsanitize=address -fsanitize=undefined # These flags are causing linking errors at runtime
+INCLUDES =	-Iinclude -I$(ANTLR_INC_DIR) -I$(ANTLR_OUT_DIR)
 
-
-# ANTLR STUFF - FROM build.sh PROVIDED BY BILL
-################################################
-ANTLR_HEADER_PATH = -Iantlr_cpp_src/runtime/src -Iantlr_output
-ANTLR_OUTPUT_PATH=antlr_output
-ANTLR_LIB_PATH=./ 
-#####################END OF ANTLR STUFF ########
 
 all: $(PROG)
 
 test: all
 	@./test.sh test.txt
 
-$(PROG): $(notdir $(OBJS)) $(SRC_DIR)/*.cpp include/*.h
-	$(CXX) $(CXX_FLAGS) -Iantlr_cpp_src/runtime/src $(INCLUDES) -I$(ANTLR_OUTPUT_PATH) -o $@ $(OBJS) ./src/main.cpp $(ANTLR_OUTPUT_PATH)/*.cpp -L$(ANTLR_LIB_PATH) -lantlr4-runtime
+$(PROG): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $(OBJS) -L$(ANTLR_LIB_DIR) -l$(ANTLR_LIB)
 
-%.o: %.cpp
-	$(CXX) $(CXX_FLAGS) $(INCLUDES) $(ANTLR_HEADER_PATH) -c -o $(BIN_DIR)/$@ $^ 
-
+bin/%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $^
 
 clean:
 	rm -f $(PROG) $(OBJS)
 
-.PHONY: all test clean
+cleanall: clean
+	rm -f antlr_output/* *.table
+
+.PHONY: all test clean cleanall
