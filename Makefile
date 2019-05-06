@@ -24,7 +24,7 @@ OBJS =		$(ANTLR_OBJS) $(LIB_OBJS) $(PROG_OBJS)
 
 CXX ?=		g++  # '?=' allows CXX to be redefined in shell prior to running makefile
 DISABLE_WARNINGS = -Wno-unused-parameter -Wno-attributes -Wno-delete-non-virtual-dtor
-CXXFLAGS =	-g -Wall $(DISABLE_WARNINGS) -Wextra -pedantic-errors -std=c++14
+CXXFLAGS =	-g -Wall -Wextra -pedantic-errors $(DISABLE_WARNINGS) -std=c++11
 CXXSANFLAGS =	-fsanitize=address -fsanitize=undefined # These flags are causing linking errors at runtime
 INCLUDES =	-Iinclude -I$(ANTLR_INC_DIR) -I$(ANTLR_OUT_DIR)
 
