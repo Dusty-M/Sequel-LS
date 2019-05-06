@@ -1,7 +1,7 @@
 PROGNAME =	MSGdb
 PROG =		$(BIN_DIR)/$(PROGNAME)
 
-VPATH =		$(ANTLR_OUT_DIR):$(LIB_DIR):$(SRC_DIR)
+VPATH = 	$(ANTLR_OUT_DIR) $(LIB_DIR) $(SRC_DIR)
 
 BIN_DIR =	bin
 LIB_DIR =	lib
@@ -28,6 +28,10 @@ CXXFLAGS =	-g -Wall $(DISABLE_WARNINGS) -Wextra -pedantic-errors -std=c++14
 CXXSANFLAGS =	-fsanitize=address -fsanitize=undefined # These flags are causing linking errors at runtime
 INCLUDES =	-Iinclude -I$(ANTLR_INC_DIR) -I$(ANTLR_OUT_DIR)
 
+ANTLR_GEN :=	$(shell if ! [ "$$(ls $(ANTLR_OUT_DIR))" ] ; then \
+			java -jar antlr-4.7.1-complete.jar -Dlanguage=Cpp \
+			-no-listener -visitor -o $(ANTLR_OUT_DIR) SQL.g4 ; \
+		fi)
 
 all: $(PROG)
 
@@ -37,7 +41,7 @@ test: all
 $(PROG): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $(OBJS) -L$(ANTLR_LIB_DIR) -l$(ANTLR_LIB)
 
-bin/%.o: %.cpp
+$(BIN_DIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $^
 
 clean:
