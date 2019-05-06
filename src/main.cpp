@@ -6,6 +6,7 @@
 #include "SQLLexer.h"
 #include "TableTools.h"
 #include "TableDirectory.h"
+
 #include <stdio.h>
 #include <utility>
 #include <string.h>
@@ -29,14 +30,14 @@ int main(int argc, char** argv) {
 			test_to_file = true;
 		}
 
-		std::ifstream stdin;
-		stdin.open(argv[1]);
-		if(!stdin){
+		std::ifstream infile;
+		infile.open(argv[1]);
+		if (!infile) {
 			std::cerr << "Couldn't open input file" << std::endl;
 			exit(1);
 		}else{
 			char c;
-			while(stdin.get(c)){
+			while (infile.get(c)) {
 				if(strcmp(&c, "\n")){
 					input_str.push_back(c);
 				}
