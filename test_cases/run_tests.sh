@@ -2,7 +2,6 @@
 
 sqlite_out=sqlite_out.csv # output file used by sqlite3
 prog_out=programoutput.csv # output file used by database engine being tested
-#prog_name=${1?usage: run_test <path>/<db engine executable>}
 if [ "X$1" = "X" ]; then # if there are no args
 	echo "usage: run_tests <database engine executable being tested>"
 	exit 1
