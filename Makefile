@@ -1,11 +1,15 @@
-PROGNAME =	MSGdb
+PROGNAME =	Sequel-LS
 PROG =		$(BIN_DIR)/$(PROGNAME)
+
+TESTNAME =	run_tests.sh
+TEST =		$(TEST_DIR)/$(TESTNAME)
 
 VPATH = 	$(ANTLR_OUT_DIR) $(LIB_DIR) $(SRC_DIR)
 
 BIN_DIR =	bin
 LIB_DIR =	lib
 SRC_DIR =	src
+TEST_DIR =	test_cases
 
 ANTLR_LIB =	antlr4-runtime
 ANTLR_LIB_DIR =	.
@@ -36,7 +40,7 @@ ANTLR_GEN :=	$(shell if ! [ "$$(ls $(ANTLR_OUT_DIR))" ] ; then \
 all: $(PROG)
 
 test: all
-	@./test.sh test.txt
+	$(TEST) $(PROG)
 
 $(PROG): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $(OBJS) -L$(ANTLR_LIB_DIR) -l$(ANTLR_LIB)

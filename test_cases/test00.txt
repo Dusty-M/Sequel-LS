@@ -1,0 +1,42 @@
+--- Simple select * from table
+
+drop table if exists products;
+drop table if exists orders;
+drop table if exists order_contents;
+
+create table products (product_id 'int', 
+		       name 'char', 
+		       price_kg 'double');
+
+create table orders (order_num 'int', 
+		     order_date 'date',
+		     customer_lastname 'char', 
+		     customer_firstname 'char');
+
+create table order_contents (order_num 'int', 
+			     product_id 'int', 
+			     kg_bought 'double');
+
+insert into products values (1, 'Apple', 3.5), 
+			    (2, 'Pear', 4.0), 
+			    (3, 'Lime', 5.0), 
+			    (4, 'Raspberry', 10.0), 
+			    (5, 'Peach', 10.0), 
+			    (6, 'Pineapple', 1.75);
+
+insert into orders values (1000, '2017-06-16', 'Bloom', 'Leopold'), 
+			  (1001, '2017-07-05', 'Kafka', 'Franz'), 
+			  (1002, '2017-10-17', 'Framboise', 'Fiona'), 
+			  (1003, '2018-06-01', 'Hindbaer', 'Hannah');
+
+insert into order_contents values (1000, 3, 0.6), 
+				  (1001, 3, 10.0), 
+				  (1001, 5, 2.5), 
+				  (1001, 2, 0.5), 
+				  (1002, 2, 5.0), 
+				  (1002, 4, 20.0), 
+				  (1003, 3, 3.0), 
+				  (1003, 5, 4.0), 
+				  (1003, 4, 3.0);
+select * 
+from products;

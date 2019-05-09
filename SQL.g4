@@ -40,7 +40,7 @@ NumValue:	[0-9]+(.[0-9][0-9]*)?;
 StringLiteral:	'\'' .*? '\''; // Does not accommodate literals with escaped quotes
 
 WHITESPACE:	[ \t\r\n]+ -> skip;
-
+LINE_COMMENT:	'--' ~[\r\n]* -> skip;
 
 primary_expression	: statement SEMICOLON EOF
 			;

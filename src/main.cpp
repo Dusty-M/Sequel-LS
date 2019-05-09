@@ -61,9 +61,8 @@ int main(int argc, char** argv) {
 	// Traversing tree with ComputeVisitor
 	SQLComputeVisitor test;
 	std::vector<BaseTblPtr> result = tree->accept(&test);
-
 	if (test_to_file == true) { // Store output to file.
-		std::ofstream outfile("./lib/testing/programoutput.csv",
+		std::ofstream outfile("programoutput.csv",
 			std::ios::out | std::ios::trunc);
 		for (auto cur_tbl: result) {
 			std::vector<std::string> col_names = cur_tbl->get_col_names();
