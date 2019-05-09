@@ -13,7 +13,7 @@ for filename in test_cases/test*.txt; do
 	# Find any line beginning with '---', then remove the first 4 characters from line
 	test_descr=$(grep ^---.* $filename | cut -c 5-)
 
-	$prog_name $filename test	# run database program in test mode
+	$prog_name -i $filename -t $prog_out # run database program in test mode
 	if ! [ 0 -eq $? ] ; then # If exit status code != 0 then exit script
 		echo "$prog_name failed to exit correctly, exit status is not zero.  Aborting script"
 		exit 1

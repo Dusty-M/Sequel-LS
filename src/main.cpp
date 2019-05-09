@@ -10,28 +10,45 @@
 #include <stdio.h>
 #include <utility>
 #include <string.h>
+#include <unistd.h>
 
 #include "DiskDataTable.h"
-
-using std::string;
 
 static void usage(void);
 
 int main(int argc, char** argv) {
-	string input_str;
-	bool test_to_file = false; // Print output to screen by default.
+	std::string input_str;
+	std::string input_file;
+	std::string test_file;
+	bool iflag = false; // Read from interactive mode by default.
+	bool tflag = false; // Print output to screen by default.
 
-	if (argc == 1) { // Interactive mode.
-		std::cout << ">> ";
-		std::getline(std::cin, input_str);
-	} else if (argc > 1 && argc < 4) { // Read from file mode.
-		// If 2nd arg is "test", then store output to file.
-		if (argc == 3 && strcmp(argv[2], "test") == 0) {
-			test_to_file = true;
+	int ch;
+	while ((ch = getopt(argc, argv, "i:t:")) != -1) {
+		switch (ch) {
+		case 'i': // Read from input file.
+			iflag = true;
+			input_file = optarg;
+			break;
+		case 't': // Write to test output file.
+			tflag = true;
+			test_file = optarg;
+			break;
+		default:
+			usage();
 		}
+	}
 
+	argc -= optind;
+	argv += optind;
+
+	if (argc > 0) {
+		usage();
+	}
+
+	if (iflag == true) { // Read from input file mode.
 		std::ifstream infile;
-		infile.open(argv[1]);
+		infile.open(input_file);
 		if (!infile) {
 			std::cerr << "Couldn't open input file" << std::endl;
 			exit(1);
@@ -43,8 +60,9 @@ int main(int argc, char** argv) {
 				}
 			}
 		}
-	} else { // Not a valid mode.
-		usage();
+	} else { // Interactive mode.
+		std::cout << ">> ";
+		std::getline(std::cin, input_str);
 	}
 
 	//The below was based on the ANTLR cpp official demo code
@@ -61,9 +79,8 @@ int main(int argc, char** argv) {
 	// Traversing tree with ComputeVisitor
 	SQLComputeVisitor test;
 	std::vector<BaseTblPtr> result = tree->accept(&test);
-	if (test_to_file == true) { // Store output to file.
-		std::ofstream outfile("programoutput.csv",
-			std::ios::out | std::ios::trunc);
+	if (tflag == true) { // Store output to file.
+		std::ofstream outfile(test_file, std::ios::out | std::ios::trunc);
 		for (auto cur_tbl: result) {
 			std::vector<std::string> col_names = cur_tbl->get_col_names();
 			store_col_names(col_names, outfile);
@@ -83,6 +100,6 @@ static void usage(void)
 {
 	extern char *__progname;
 
-	std::cerr << "usage: " << __progname << " [infile [test]]" << std::endl;;
+	std::cerr << "usage: " << __progname << " [-i infile] [-t outfile]" << std::endl;
 	exit(1);
 }

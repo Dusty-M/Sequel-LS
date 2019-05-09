@@ -15,7 +15,7 @@ Some general advice when writing the text files:
 
 RUNNING run_tests.sh:
 
-the script must be run from the root directory (where the Makefile exists).  It is called with "test_cases/run_tests <database program executable>". 
-example: test_cases/run_tests bin/Sequel-LS
+the script must be run from the root directory (where the Makefile exists).  It is called with "test_cases/run_tests.sh <database program executable>".
+example: test_cases/run_tests.sh bin/Sequel-LS
 
 A list will be displayed containing each .txt file tested, the description found within the text file, and either 'PASSED' or 'FAILED', depending on whether the outputs of Sequel-LS and SQLite matched.
